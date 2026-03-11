@@ -1,0 +1,40 @@
+{
+  "remediation_id": "REM_CROSS_01",
+  "title": "Remediate Capital One Attack Pattern",
+  "domain": "cross_resource",
+  "severity": "critical",
+  "check_id": "CHECK_CROSS_01",
+  "console_steps": [
+    "1. IMMEDIATE: Block S3 public access on affected buckets",
+    "2. IMMEDIATE: Enforce IMDSv2 on all EC2 instances",
+    "3. Review and restrict IAM role permissions (least privilege)",
+    "4. Restrict security group ingress to required ports only",
+    "5. Enable GuardDuty for anomaly detection",
+    "6. Review CloudTrail logs for suspicious activity",
+    "7. Enable VPC Flow Logs for network visibility",
+    "8. Audit all cross-service IAM role trust policies"
+  ],
+  "cli_command": "# Multi-step remediation:\n# Step 1: Block S3 public access\naws s3api put-public-access-block --bucket {BUCKET_NAME} --public-access-block-configuration BlockPublicAcls=true,IgnorePublicAcls=true,BlockPublicPolicy=true,RestrictPublicBuckets=true\n# Step 2: Enforce IMDSv2\naws ec2 modify-instance-metadata-options --instance-id {INSTANCE_ID} --http-tokens required --http-endpoint enabled\n# Step 3: Remove open SG rules\naws ec2 revoke-security-group-ingress --group-id {SG_ID} --protocol tcp --port 22 --cidr 0.0.0.0/0",
+  "cli_example": "aws s3api put-public-access-block --bucket sensitive-data --public-access-block-configuration BlockPublicAcls=true,IgnorePublicAcls=true,BlockPublicPolicy=true,RestrictPublicBuckets=true",
+  "terraform_snippet": "# Combined Capital One pattern remediation\nresource \"aws_s3_bucket_public_access_block\" \"block\" {\n  bucket                  = aws_s3_bucket.data.id\n  block_public_acls       = true\n  block_public_policy     = true\n  ignore_public_acls      = true\n  restrict_public_buckets = true\n}\n\nresource \"aws_instance\" \"secured\" {\n  metadata_options {\n    http_tokens   = \"required\"\n    http_endpoint = \"enabled\"\n  }\n}",
+  "references": [
+    {
+      "framework": "CIS AWS Foundations Benchmark",
+      "control_id": "2.1.4, 5.2, 5.6",
+      "title": "S3 public access, SG restrictions, IMDSv2"
+    },
+    {
+      "framework": "NIST 800-53",
+      "control_id": "AC-3, SC-7, CM-6",
+      "title": "Access control, boundary protection, configuration"
+    },
+    {
+      "framework": "PCI DSS",
+      "control_id": "1.2.1, 1.3.1",
+      "title": "Network segmentation and access control"
+    }
+  ],
+  "estimated_fix_time_minutes": 60,
+  "risk_reduction": "Critical — prevents SSRF-to-data-exfiltration chain",
+  "rollback_difficulty": "Hard — multiple services affected, test carefully"
+}

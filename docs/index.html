@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0" />
+  <title>CloudLine — AWS Security Scanner</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="page-wrapper">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <h1>CloudLine</h1>
+        <div class="subtitle">
+          AWS Security Documentation
+        </div>
+      </div>
+      <nav>
+        <div class="nav-section">Getting Started</div>
+        <a href="index.html">
+          <span class="nav-icon">&#127968;</span> Home
+        </a>
+        <a href="architecture.html">
+          <span class="nav-icon">&#128736;</span>
+          How It Works
+        </a>
+        <a href="getting-started.html">
+          <span class="nav-icon">&#128640;</span>
+          Deployment Guide
+        </a>
+        <a href="usage.html">
+          <span class="nav-icon">&#128214;</span>
+          Usage Guide
+        </a>
+        <div class="nav-section">Security Checks</div>
+        <a href="policies.html">
+          <span class="nav-icon">&#128737;</span>
+          All 21 Policies
+        </a>
+        <a href="testing.html">
+          <span class="nav-icon">&#9989;</span>
+          Testing Guide
+        </a>
+      </nav>
+    </aside>
+
+    <div class="sidebar-overlay"></div>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <header class="content-header">
+        <button class="menu-toggle">&#9776;</button>
+        <span class="breadcrumb">Home</span>
+      </header>
+
+      <div class="content-body">
+        <!-- Hero -->
+        <div class="hero">
+          <h1>Welcome to CloudLine</h1>
+          <p>
+            CloudLine automatically scans your Amazon
+            Web Services (AWS) account and finds security
+            problems before hackers do. Think of it as a
+            security guard that watches your cloud 24/7.
+          </p>
+          <a href="getting-started.html" class="btn">
+            Get Started &rarr;
+          </a>
+        </div>
+
+        <!-- What Is CloudLine -->
+        <h2>What Is CloudLine?</h2>
+
+        <div class="analogy">
+          <strong>Simple Analogy</strong>
+          Imagine your AWS account is a house. CloudLine
+          walks through every room, checks if the doors
+          are locked, windows are closed, the alarm
+          system is on, and the smoke detectors have
+          batteries. If something is wrong, it tells you
+          exactly what to fix and how.
+        </div>
+
+        <p>
+          CloudLine is a <strong>security scanning
+          tool</strong> built for Amazon Web Services
+          (AWS). It checks 21 different security rules
+          across your cloud setup and tells you:
+        </p>
+
+        <ul>
+          <li>
+            <strong>What is wrong</strong> &mdash;
+            e.g., "Your S3 bucket is publicly accessible"
+          </li>
+          <li>
+            <strong>How serious it is</strong> &mdash;
+            Critical, High, or Medium severity
+          </li>
+          <li>
+            <strong>How to fix it</strong> &mdash;
+            step-by-step instructions, CLI commands,
+            and Terraform code
+          </li>
+          <li>
+            <strong>Which regulations it affects</strong>
+            &mdash; CIS, NIST, PCI DSS, HIPAA, SOC 2
+          </li>
+        </ul>
+
+        <!-- Key Numbers -->
+        <div class="stats-row">
+          <div class="stat-card">
+            <div class="stat-number">21</div>
+            <div class="stat-label">
+              Security Checks
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number">5</div>
+            <div class="stat-label">
+              Security Domains
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number">5</div>
+            <div class="stat-label">
+              Compliance Frameworks
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number">8</div>
+            <div class="stat-label">
+              AWS Services Scanned
+            </div>
+          </div>
+        </div>
+
+        <!-- Features -->
+        <h2>Key Features</h2>
+
+        <div class="card-grid">
+          <div class="card feature-card">
+            <div class="icon">&#128270;</div>
+            <h3>Automated Scanning</h3>
+            <p>
+              Scans 8 AWS services automatically.
+              No manual checking required.
+            </p>
+          </div>
+
+          <div class="card feature-card">
+            <div class="icon">&#9889;</div>
+            <h3>Real-Time Alerts</h3>
+            <p>
+              Detects configuration changes instantly
+              via CloudTrail events and alerts you
+              within seconds.
+            </p>
+          </div>
+
+          <div class="card feature-card">
+            <div class="icon">&#128736;</div>
+            <h3>One-Click Fixes</h3>
+            <p>
+              Fix common problems with a single click.
+              No need to write code or run commands.
+            </p>
+          </div>
+
+          <div class="card feature-card">
+            <div class="icon">&#128200;</div>
+            <h3>Risk Scoring</h3>
+            <p>
+              Each finding gets a risk score (0-100)
+              based on severity, exploitability, and
+              impact so you know what to fix first.
+            </p>
+          </div>
+
+          <div class="card feature-card">
+            <div class="icon">&#128203;</div>
+            <h3>Compliance Mapping</h3>
+            <p>
+              Every check maps to CIS AWS, NIST 800-53,
+              PCI DSS, HIPAA, and SOC 2 frameworks.
+            </p>
+          </div>
+
+          <div class="card feature-card">
+            <div class="icon">&#128187;</div>
+            <h3>Dashboard</h3>
+            <p>
+              A visual dashboard shows your overall
+              security score, trends, and detailed
+              findings at a glance.
+            </p>
+          </div>
+        </div>
+
+        <!-- What Services -->
+        <h2>What AWS Services Does It Check?</h2>
+
+        <p>
+          CloudLine scans these 8 AWS services for
+          security misconfigurations:
+        </p>
+
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>AWS Service</th>
+                <th>What It Does</th>
+                <th>What CloudLine Checks</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>IAM</strong></td>
+                <td>Manages who can access your AWS</td>
+                <td>
+                  Root MFA, password policy, user MFA,
+                  unused credentials, Access Analyzer
+                </td>
+              </tr>
+              <tr>
+                <td><strong>S3</strong></td>
+                <td>Stores files in the cloud</td>
+                <td>
+                  Public access blocking, encryption
+                </td>
+              </tr>
+              <tr>
+                <td><strong>EC2</strong></td>
+                <td>Runs virtual servers</td>
+                <td>
+                  Security groups, IMDSv2, EBS
+                  encryption
+                </td>
+              </tr>
+              <tr>
+                <td><strong>VPC</strong></td>
+                <td>Your private network in AWS</td>
+                <td>
+                  Flow logs, Network ACL rules
+                </td>
+              </tr>
+              <tr>
+                <td><strong>RDS</strong></td>
+                <td>Managed databases</td>
+                <td>
+                  Public access, encryption, backups
+                </td>
+              </tr>
+              <tr>
+                <td><strong>Lambda</strong></td>
+                <td>Runs code without servers</td>
+                <td>
+                  Tracing, environment encryption
+                </td>
+              </tr>
+              <tr>
+                <td><strong>CloudTrail</strong></td>
+                <td>Logs all API activity</td>
+                <td>
+                  Multi-region, log validation,
+                  CloudWatch alarms
+                </td>
+              </tr>
+              <tr>
+                <td><strong>GuardDuty</strong></td>
+                <td>Threat detection service</td>
+                <td>
+                  Enabled/disabled status
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- 5 Domains -->
+        <h2>The 5 Security Domains</h2>
+
+        <p>
+          CloudLine organizes its 21 security checks
+          into 5 categories (called "domains"):
+        </p>
+
+        <div class="card-grid">
+          <div class="card">
+            <h4>1. Identity &amp; Access Control</h4>
+            <p>
+              <em>5 checks</em> &mdash; Makes sure
+              only the right people can access your AWS
+              account and that their access is secure.
+            </p>
+          </div>
+          <div class="card">
+            <h4>2. Data Protection</h4>
+            <p>
+              <em>6 checks</em> &mdash; Ensures your
+              data is encrypted, backed up, and not
+              publicly exposed.
+            </p>
+          </div>
+          <div class="card">
+            <h4>3. Network Security</h4>
+            <p>
+              <em>3 checks</em> &mdash; Verifies your
+              network is locked down and not open to
+              attackers.
+            </p>
+          </div>
+          <div class="card">
+            <h4>4. Logging &amp; Monitoring</h4>
+            <p>
+              <em>4 checks</em> &mdash; Confirms that
+              AWS is recording activity so you can
+              detect suspicious behavior.
+            </p>
+          </div>
+          <div class="card">
+            <h4>5. Threat Detection</h4>
+            <p>
+              <em>2 checks + 1 cross-resource</em>
+              &mdash; Checks that AWS security services
+              and serverless functions are properly
+              configured.
+            </p>
+          </div>
+        </div>
+
+        <!-- Next Steps -->
+        <h2>Where to Go Next</h2>
+
+        <div class="card-grid">
+          <a href="architecture.html"
+            class="card feature-card"
+            style="text-decoration: none">
+            <div class="icon">&#128736;</div>
+            <h3>How It Works</h3>
+            <p>
+              Learn how CloudLine detects problems
+              step by step.
+            </p>
+          </a>
+
+          <a href="getting-started.html"
+            class="card feature-card"
+            style="text-decoration: none">
+            <div class="icon">&#128640;</div>
+            <h3>Deploy CloudLine</h3>
+            <p>
+              Set up CloudLine in your AWS account
+              in under 30 minutes.
+            </p>
+          </a>
+
+          <a href="policies.html"
+            class="card feature-card"
+            style="text-decoration: none">
+            <div class="icon">&#128737;</div>
+            <h3>View All 21 Checks</h3>
+            <p>
+              See every security rule CloudLine
+              enforces with plain English explanations.
+            </p>
+          </a>
+        </div>
+      </div>
+    </main>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>

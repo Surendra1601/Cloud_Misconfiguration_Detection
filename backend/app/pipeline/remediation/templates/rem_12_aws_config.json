@@ -1,0 +1,40 @@
+{
+  "remediation_id": "REM_12",
+  "title": "Enable AWS Config Recording",
+  "domain": "logging_monitoring",
+  "severity": "medium",
+  "check_id": "CHECK_12",
+  "console_steps": [
+    "1. Open the AWS Config console",
+    "2. Click 'Get started' or 'Settings'",
+    "3. Under 'Recording', select 'All resources'",
+    "4. Enable 'Include global resources'",
+    "5. Choose an S3 bucket for configuration snapshots",
+    "6. Optionally enable SNS notifications",
+    "7. Create or select an IAM role for Config",
+    "8. Click 'Confirm'"
+  ],
+  "cli_command": "aws configservice put-configuration-recorder --configuration-recorder name=default,roleARN={ROLE_ARN},recordingGroup={allSupported=true,includeGlobalResourceTypes=true}",
+  "cli_example": "aws configservice put-configuration-recorder --configuration-recorder name=default,roleARN=arn:aws:iam::123456789012:role/ConfigRole,recordingGroup={allSupported=true,includeGlobalResourceTypes=true}",
+  "terraform_snippet": "resource \"aws_config_configuration_recorder\" \"main\" {\n  name     = \"default\"\n  role_arn = aws_iam_role.config.arn\n\n  recording_group {\n    all_supported                 = true\n    include_global_resource_types = true\n  }\n}\n\nresource \"aws_config_configuration_recorder_status\" \"main\" {\n  name       = aws_config_configuration_recorder.main.name\n  is_enabled = true\n}",
+  "references": [
+    {
+      "framework": "CIS AWS Foundations Benchmark",
+      "control_id": "3.5",
+      "title": "Ensure AWS Config is enabled in all regions"
+    },
+    {
+      "framework": "NIST 800-53",
+      "control_id": "CM-8",
+      "title": "Information System Component Inventory"
+    },
+    {
+      "framework": "SOC 2",
+      "control_id": "CC7.1",
+      "title": "Configuration management"
+    }
+  ],
+  "estimated_fix_time_minutes": 15,
+  "risk_reduction": "Medium — enables configuration change tracking",
+  "rollback_difficulty": "Easy — recorder can be stopped"
+}

@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0" />
+  <title>Usage Guide — CloudLine</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="page-wrapper">
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <h1>CloudLine</h1>
+        <div class="subtitle">
+          AWS Security Documentation
+        </div>
+      </div>
+      <nav>
+        <div class="nav-section">Getting Started</div>
+        <a href="index.html">
+          <span class="nav-icon">&#127968;</span> Home
+        </a>
+        <a href="architecture.html">
+          <span class="nav-icon">&#128736;</span>
+          How It Works
+        </a>
+        <a href="getting-started.html">
+          <span class="nav-icon">&#128640;</span>
+          Deployment Guide
+        </a>
+        <a href="usage.html">
+          <span class="nav-icon">&#128214;</span>
+          Usage Guide
+        </a>
+        <div class="nav-section">Security Checks</div>
+        <a href="policies.html">
+          <span class="nav-icon">&#128737;</span>
+          All 21 Policies
+        </a>
+        <a href="testing.html">
+          <span class="nav-icon">&#9989;</span>
+          Testing Guide
+        </a>
+      </nav>
+    </aside>
+
+    <div class="sidebar-overlay"></div>
+
+    <main class="main-content">
+      <header class="content-header">
+        <button class="menu-toggle">&#9776;</button>
+        <span class="breadcrumb">
+          <a href="index.html">Home</a> &rsaquo;
+          Usage Guide
+        </span>
+      </header>
+
+      <div class="content-body">
+        <h1>How to Use CloudLine</h1>
+        <p class="page-description">
+          Now that CloudLine is running, here is how
+          to scan your AWS account, view results,
+          and fix security problems.
+        </p>
+
+        <!-- Running a Scan -->
+        <h2>Running a Security Scan</h2>
+
+        <div class="analogy">
+          <strong>Simple Analogy</strong>
+          Running a scan is like asking a security
+          guard to walk through your entire building
+          and report anything wrong. The guard checks
+          every door, window, and alarm system.
+        </div>
+
+        <h3>From the Dashboard</h3>
+        <div class="steps">
+          <div class="step">
+            <h4>Open the Dashboard</h4>
+            <p>
+              Go to
+              <code>http://localhost:5173</code>
+              (local) or
+              <code>https://app.yourdomain.com</code>
+              (production) in your web browser.
+            </p>
+          </div>
+          <div class="step">
+            <h4>Log In</h4>
+            <p>
+              Enter your username and password. In
+              development mode, any credentials work.
+              In production, use your configured
+              authentication.
+            </p>
+          </div>
+          <div class="step">
+            <h4>View the Dashboard</h4>
+            <p>
+              The main dashboard shows your overall
+              compliance score, severity breakdown,
+              and domain scores. If this is your first
+              visit, the data will be empty until you
+              run a scan.
+            </p>
+          </div>
+        </div>
+
+        <h3>From the Command Line (API)</h3>
+
+        <p>
+          You can also run scans using the API directly.
+          This is useful for automation or if you prefer
+          working in the terminal.
+        </p>
+
+        <h4>Start a new scan</h4>
+        <div class="code-block">
+          <span class="lang-label">terminal</span>
+curl -X POST http://localhost:9710/api/v1/scans
+        </div>
+
+        <p>This returns a scan ID:</p>
+        <div class="code-block">
+          <span class="lang-label">json</span>
+{
+  "scan_id": "scan_abc123",
+  "status": "running",
+  "started_at": "2026-03-02T10:00:00Z"
+}
+        </div>
+
+        <h4>Check scan status</h4>
+        <div class="code-block">
+          <span class="lang-label">terminal</span>
+curl http://localhost:9710/api/v1/scans/scan_abc123
+        </div>
+
+        <h4>View all violations found</h4>
+        <div class="code-block">
+          <span class="lang-label">terminal</span>
+curl http://localhost:9710/api/v1/violations
+        </div>
+
+        <!-- Understanding Results -->
+        <h2>Understanding Your Results</h2>
+
+        <h3>Compliance Score</h3>
+        <p>
+          Your compliance score is a percentage from
+          0% to 100%. It tells you how many of
+          CloudLine's 21 security checks your account
+          passes.
+        </p>
+        <ul>
+          <li>
+            <strong>90-100%</strong> &mdash; Excellent.
+            Your account is well-secured.
+          </li>
+          <li>
+            <strong>70-89%</strong> &mdash; Good, but
+            there are some issues to address.
+          </li>
+          <li>
+            <strong>50-69%</strong> &mdash; Fair.
+            Several security gaps need attention.
+          </li>
+          <li>
+            <strong>Below 50%</strong> &mdash; Needs
+            immediate attention. Many security
+            controls are missing.
+          </li>
+        </ul>
+
+        <div class="code-block">
+          <span class="lang-label">terminal</span>
+# Check your compliance score via API
+curl http://localhost:9710/api/v1/compliance/score
+        </div>
+
+        <h3>Violations</h3>
+        <p>
+          A "violation" means CloudLine found something
+          wrong. Each violation includes:
+        </p>
+
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>What It Means</th>
+                <th>Example</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>check_id</code></td>
+                <td>
+                  Which security rule was violated
+                </td>
+                <td>CHECK_04</td>
+              </tr>
+              <tr>
+                <td><code>severity</code></td>
+                <td>How serious the problem is</td>
+                <td>
+                  <span class="badge badge-critical">
+                    critical
+                  </span>
+                </td>
+              </tr>
+              <tr>
+                <td><code>reason</code></td>
+                <td>
+                  Plain English description of the
+                  problem
+                </td>
+                <td>
+                  "S3 bucket does not block public
+                  access"
+                </td>
+              </tr>
+              <tr>
+                <td><code>resource</code></td>
+                <td>
+                  Which AWS resource is affected
+                </td>
+                <td>arn:aws:s3:::my-bucket</td>
+              </tr>
+              <tr>
+                <td><code>domain</code></td>
+                <td>
+                  Which security category
+                </td>
+                <td>data_protection</td>
+              </tr>
+              <tr>
+                <td><code>risk_score</code></td>
+                <td>
+                  Danger level from 0 to 100
+                </td>
+                <td>92</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3>Severity Levels</h3>
+
+        <div class="card-grid">
+          <div class="card" style="border-left:
+            4px solid #991b1b">
+            <h4>
+              <span class="badge badge-critical">
+                Critical
+              </span>
+            </h4>
+            <p>
+              Immediate risk of data breach or
+              account compromise. Fix right away.
+            </p>
+            <p><em>
+              Example: S3 bucket is publicly
+              accessible to the entire internet.
+            </em></p>
+          </div>
+
+          <div class="card" style="border-left:
+            4px solid #c2410c">
+            <h4>
+              <span class="badge badge-high">
+                High
+              </span>
+            </h4>
+            <p>
+              Significant security weakness. Fix
+              within 24 hours.
+            </p>
+            <p><em>
+              Example: RDS database has no encryption.
+            </em></p>
+          </div>
+
+          <div class="card" style="border-left:
+            4px solid #a16207">
+            <h4>
+              <span class="badge badge-medium">
+                Medium
+              </span>
+            </h4>
+            <p>
+              Security best practice not followed.
+              Fix within a week.
+            </p>
+            <p><em>
+              Example: VPC Flow Logs are not enabled.
+            </em></p>
+          </div>
+        </div>
+
+        <!-- Fixing Problems -->
+        <h2>Fixing Security Problems</h2>
+
+        <p>
+          CloudLine gives you three ways to fix
+          problems, from manual to fully automatic.
+        </p>
+
+        <h3>
+          <span class="tier-badge tier-1">Tier 1</span>
+          Follow the Instructions
+        </h3>
+
+        <p>
+          Every violation comes with three types of
+          fix instructions:
+        </p>
+
+        <div class="card-grid">
+          <div class="card">
+            <h4>Console Steps</h4>
+            <p>
+              Step-by-step guide to fix it manually
+              in the AWS web console. Best for
+              beginners.
+            </p>
+          </div>
+          <div class="card">
+            <h4>CLI Command</h4>
+            <p>
+              A ready-to-use AWS CLI command you can
+              copy and paste into your terminal.
+            </p>
+          </div>
+          <div class="card">
+            <h4>Terraform Snippet</h4>
+            <p>
+              Infrastructure-as-code that ensures
+              the fix stays in place permanently.
+            </p>
+          </div>
+        </div>
+
+        <div class="code-block">
+          <span class="lang-label">terminal</span>
+# View remediation for a specific check
+curl http://localhost:9710/api/v1/\
+remediation/suggestions/CHECK_04
+        </div>
+
+        <h3>
+          <span class="tier-badge tier-2">Tier 2</span>
+          One-Click Fix
+        </h3>
+
+        <p>
+          For 6 common problems, you can fix them with
+          a single API call (or a button click in the
+          dashboard):
+        </p>
+
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Problem</th>
+                <th>Remediation ID</th>
+                <th>What It Fixes</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>S3 Public Access</td>
+                <td>REM_04</td>
+                <td>
+                  Blocks all public access on the
+                  bucket
+                </td>
+              </tr>
+              <tr>
+                <td>CloudTrail Logging</td>
+                <td>REM_05</td>
+                <td>
+                  Enables multi-region logging
+                </td>
+              </tr>
+              <tr>
+                <td>Open SSH (Port 22)</td>
+                <td>REM_07</td>
+                <td>
+                  Removes 0.0.0.0/0 SSH rule
+                </td>
+              </tr>
+              <tr>
+                <td>IMDSv2 Not Enforced</td>
+                <td>REM_08</td>
+                <td>
+                  Requires IMDSv2 on the instance
+                </td>
+              </tr>
+              <tr>
+                <td>EBS Not Encrypted</td>
+                <td>REM_17</td>
+                <td>
+                  Enables default EBS encryption
+                </td>
+              </tr>
+              <tr>
+                <td>Password Policy</td>
+                <td>REM_02</td>
+                <td>
+                  Sets strong password requirements
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="code-block">
+          <span class="lang-label">terminal</span>
+# Execute a one-click fix via API
+curl -X POST \
+  http://localhost:9710/api/v1/\
+remediation/execute \
+  -H "Content-Type: application/json" \
+  -d '{
+    "remediation_id": "REM_04",
+    "resource_arn": "arn:aws:s3:::my-bucket"
+  }'
+        </div>
+
+        <h3>
+          <span class="tier-badge tier-3">Tier 3</span>
+          Auto-Remediation
+        </h3>
+
+        <p>
+          You can configure CloudLine to automatically
+          fix certain types of violations as soon as
+          they are detected. This is optional and you
+          choose which checks to auto-remediate.
+        </p>
+
+        <div class="code-block">
+          <span class="lang-label">terminal</span>
+# Enable auto-remediation for S3 public access
+curl -X PUT \
+  http://localhost:9710/api/v1/\
+remediation/config \
+  -H "Content-Type: application/json" \
+  -d '{
+    "check_id": "CHECK_04",
+    "enabled": true
+  }'
+        </div>
+
+        <div class="callout callout-warning">
+          <span class="callout-icon">&#9888;&#65039;</span>
+          <div>
+            <strong>Be careful with
+            auto-remediation.</strong>
+            Only enable it for checks you fully
+            understand. Auto-remediation changes your
+            AWS resources automatically, which could
+            affect running applications.
+          </div>
+        </div>
+
+        <!-- Rollback -->
+        <h3>Undoing a Fix (Rollback)</h3>
+
+        <p>
+          If a one-click fix causes problems, you can
+          undo it:
+        </p>
+
+        <div class="code-block">
+          <span class="lang-label">terminal</span>
+# Rollback a remediation action
+curl -X POST \
+  http://localhost:9710/api/v1/\
+remediation/rollback \
+  -H "Content-Type: application/json" \
+  -d '{
+    "action_id": "action_xyz789"
+  }'
+        </div>
+
+        <p>
+          You can find the <code>action_id</code> in
+          the audit trail:
+        </p>
+
+        <div class="code-block">
+          <span class="lang-label">terminal</span>
+# View all remediation actions taken
+curl http://localhost:9710/api/v1/\
+remediation/audit
+        </div>
+
+        <!-- Dashboard Pages -->
+        <h2>Dashboard Pages</h2>
+
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Page</th>
+                <th>URL</th>
+                <th>What You See</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Dashboard</strong></td>
+                <td>/dashboard</td>
+                <td>
+                  Overall compliance score, severity
+                  breakdown, domain scores, risk
+                  cards
+                </td>
+              </tr>
+              <tr>
+                <td><strong>Violations</strong></td>
+                <td>/violations</td>
+                <td>
+                  Sortable table of all findings,
+                  filterable by severity/domain/status,
+                  click to see details
+                </td>
+              </tr>
+              <tr>
+                <td><strong>Trends</strong></td>
+                <td>/trends</td>
+                <td>
+                  Line charts showing violations over
+                  time (7/30/90 day views)
+                </td>
+              </tr>
+              <tr>
+                <td><strong>Executive</strong></td>
+                <td>/executive</td>
+                <td>
+                  High-level summary for managers:
+                  status banner, KPI cards, domain
+                  grid, highest-risk table
+                </td>
+              </tr>
+              <tr>
+                <td><strong>Reports</strong></td>
+                <td>/reports</td>
+                <td>
+                  Remediation suggestions, audit
+                  trail, auto-remediation config
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Real-Time Alerts -->
+        <h2>Real-Time Alerts</h2>
+
+        <p>
+          CloudLine sends alerts through two channels:
+        </p>
+
+        <div class="card-grid">
+          <div class="card">
+            <h4>Dashboard Notifications</h4>
+            <p>
+              A bell icon in the top-right corner
+              shows live alerts as they happen via
+              WebSocket. Click it to see the feed
+              of recent violations.
+            </p>
+          </div>
+          <div class="card">
+            <h4>Email/SMS via SNS</h4>
+            <p>
+              If configured, CloudLine sends alerts
+              to an SNS topic which can deliver to
+              email, SMS, Slack, or PagerDuty.
+            </p>
+          </div>
+        </div>
+
+        <!-- API Quick Reference -->
+        <h2>API Quick Reference</h2>
+
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Method</th>
+                <th>Endpoint</th>
+                <th>What It Does</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>GET</td>
+                <td><code>/health</code></td>
+                <td>Health check</td>
+              </tr>
+              <tr>
+                <td>POST</td>
+                <td>
+                  <code>/api/v1/scans</code>
+                </td>
+                <td>Start a new scan</td>
+              </tr>
+              <tr>
+                <td>GET</td>
+                <td>
+                  <code>/api/v1/violations</code>
+                </td>
+                <td>List all violations</td>
+              </tr>
+              <tr>
+                <td>GET</td>
+                <td>
+                  <code>/api/v1/compliance/score</code>
+                </td>
+                <td>Get compliance score</td>
+              </tr>
+              <tr>
+                <td>GET</td>
+                <td>
+                  <code>/api/v1/risk/scores</code>
+                </td>
+                <td>Get risk scores</td>
+              </tr>
+              <tr>
+                <td>GET</td>
+                <td>
+                  <code>/api/v1/risk/summary</code>
+                </td>
+                <td>Risk summary</td>
+              </tr>
+              <tr>
+                <td>GET</td>
+                <td>
+                  <code>/api/v1/drift/alerts</code>
+                </td>
+                <td>List drift alerts</td>
+              </tr>
+              <tr>
+                <td>POST</td>
+                <td>
+                  <code>
+                    /api/v1/remediation/execute
+                  </code>
+                </td>
+                <td>Execute a fix</td>
+              </tr>
+              <tr>
+                <td>POST</td>
+                <td>
+                  <code>
+                    /api/v1/remediation/rollback
+                  </code>
+                </td>
+                <td>Undo a fix</td>
+              </tr>
+              <tr>
+                <td>GET</td>
+                <td>
+                  <code>
+                    /api/v1/remediation/audit
+                  </code>
+                </td>
+                <td>View fix history</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="callout callout-info">
+          <span class="callout-icon">&#128161;</span>
+          <div>
+            Full API documentation is available at
+            <code>/api/docs</code> (Swagger UI) and
+            <code>/api/redoc</code> (ReDoc) when
+            the backend is running.
+          </div>
+        </div>
+
+        <div class="callout callout-success">
+          <span class="callout-icon">&#9989;</span>
+          <div>
+            <strong>Next:</strong> Learn about each of
+            the
+            <a href="policies.html">21 security
+            checks</a> and what they detect.
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>

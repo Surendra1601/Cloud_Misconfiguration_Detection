@@ -1,0 +1,38 @@
+{
+  "remediation_id": "REM_13",
+  "title": "Enable Amazon GuardDuty",
+  "domain": "detection",
+  "severity": "high",
+  "check_id": "CHECK_13",
+  "console_steps": [
+    "1. Open the GuardDuty console",
+    "2. Click 'Get Started'",
+    "3. Click 'Enable GuardDuty'",
+    "4. Optionally configure finding export to S3",
+    "5. Enable all protection plans (S3, EKS, Lambda)",
+    "6. Set up CloudWatch Events rule for findings"
+  ],
+  "cli_command": "aws guardduty create-detector --enable --finding-publishing-frequency FIFTEEN_MINUTES",
+  "cli_example": "aws guardduty create-detector --enable --finding-publishing-frequency FIFTEEN_MINUTES",
+  "terraform_snippet": "resource \"aws_guardduty_detector\" \"main\" {\n  enable                       = true\n  finding_publishing_frequency = \"FIFTEEN_MINUTES\"\n\n  datasources {\n    s3_logs {\n      enable = true\n    }\n  }\n}",
+  "references": [
+    {
+      "framework": "CIS AWS Foundations Benchmark",
+      "control_id": "4.15",
+      "title": "Ensure GuardDuty is enabled"
+    },
+    {
+      "framework": "NIST 800-53",
+      "control_id": "SI-4",
+      "title": "Information System Monitoring"
+    },
+    {
+      "framework": "SOC 2",
+      "control_id": "CC7.2",
+      "title": "System monitoring and detection"
+    }
+  ],
+  "estimated_fix_time_minutes": 5,
+  "risk_reduction": "High — enables threat detection for AWS account",
+  "rollback_difficulty": "Easy — detector can be disabled"
+}

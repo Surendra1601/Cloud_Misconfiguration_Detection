@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0" />
+  <title>Getting Started — CloudLine</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="page-wrapper">
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <h1>CloudLine</h1>
+        <div class="subtitle">
+          AWS Security Documentation
+        </div>
+      </div>
+      <nav>
+        <div class="nav-section">Getting Started</div>
+        <a href="index.html">
+          <span class="nav-icon">&#127968;</span> Home
+        </a>
+        <a href="architecture.html">
+          <span class="nav-icon">&#128736;</span>
+          How It Works
+        </a>
+        <a href="getting-started.html">
+          <span class="nav-icon">&#128640;</span>
+          Getting Started
+        </a>
+        <a href="usage.html">
+          <span class="nav-icon">&#128214;</span>
+          Usage Guide
+        </a>
+        <div class="nav-section">Security Checks</div>
+        <a href="policies.html">
+          <span class="nav-icon">&#128737;</span>
+          All 21 Policies
+        </a>
+        <a href="testing.html">
+          <span class="nav-icon">&#9989;</span>
+          Testing Guide
+        </a>
+      </nav>
+    </aside>
+
+    <div class="sidebar-overlay"></div>
+
+    <main class="main-content">
+      <header class="content-header">
+        <button class="menu-toggle">&#9776;</button>
+        <span class="breadcrumb">
+          <a href="index.html">Home</a> &rsaquo;
+          Getting Started
+        </span>
+      </header>
+
+      <div class="content-body">
+        <h1>Getting Started</h1>
+        <p class="page-description">
+          Follow these steps to set up CloudLine on
+          your computer using Docker Compose.
+        </p>
+
+        <!-- Prerequisites -->
+        <h2>What You Need Before Starting</h2>
+
+        <div class="analogy">
+          <strong>Simple Analogy</strong>
+          Before baking a cake, you need an oven,
+          ingredients, and a recipe. These are the
+          "ingredients" you need before setting up
+          CloudLine.
+        </div>
+
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Tool</th>
+                <th>Version</th>
+                <th>What It Is</th>
+                <th>How to Get It</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Docker</strong></td>
+                <td>Any recent</td>
+                <td>
+                  Runs services in containers
+                  (like mini virtual machines)
+                </td>
+                <td>
+                  <code>docker --version</code>
+                </td>
+              </tr>
+              <tr>
+                <td><strong>Docker Compose</strong></td>
+                <td>v2+</td>
+                <td>
+                  Orchestrates multiple containers
+                </td>
+                <td>
+                  <code>
+                    docker compose version
+                  </code>
+                </td>
+              </tr>
+              <tr>
+                <td><strong>Node.js</strong></td>
+                <td>20+</td>
+                <td>
+                  Runs the frontend (dashboard)
+                </td>
+                <td>
+                  <code>node --version</code>
+                </td>
+              </tr>
+              <tr>
+                <td><strong>Git</strong></td>
+                <td>Any</td>
+                <td>
+                  Downloads the CloudLine code
+                </td>
+                <td>
+                  <code>git --version</code>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="callout callout-info">
+          <span class="callout-icon">&#128161;</span>
+          <div>
+            <strong>Not sure if you have these?</strong>
+            Open your terminal (Command Prompt on
+            Windows, Terminal on Mac/Linux) and type
+            each command in the "How to Get It" column.
+            If it shows a version number, you have it.
+            If it says "command not found", you need
+            to install it.
+          </div>
+        </div>
+
+        <!-- Setup Steps -->
+        <h2>Setup</h2>
+
+        <p>
+          CloudLine runs entirely via Docker Compose.
+          One command starts the backend, OPA policy
+          engine, and a local DynamoDB database.
+        </p>
+
+        <div class="steps">
+          <div class="step">
+            <h4>Download the CloudLine code</h4>
+            <p>
+              Open your terminal and run:
+            </p>
+            <div class="code-block">
+              <span class="lang-label">terminal</span>
+git clone &lt;repo-url&gt;
+cd CloudLine
+            </div>
+          </div>
+
+          <div class="step">
+            <h4>Start all services with Docker</h4>
+            <p>
+              This single command starts the backend
+              server, the policy engine (OPA), and a
+              local database:
+            </p>
+            <div class="code-block">
+              <span class="lang-label">terminal</span>
+make docker-up
+            </div>
+            <p>
+              Wait about 30 seconds. You will see logs
+              scrolling. When you see "Application
+              startup complete", the backend is ready.
+            </p>
+          </div>
+
+          <div class="step">
+            <h4>Start the dashboard (frontend)</h4>
+            <p>
+              Open a <strong>new terminal window</strong>
+              and run:
+            </p>
+            <div class="code-block">
+              <span class="lang-label">terminal</span>
+cd CloudLine/frontend
+npm install
+npm run dev
+            </div>
+            <p>
+              The dashboard will open at
+              <code>http://localhost:5173</code>
+            </p>
+          </div>
+
+          <div class="step">
+            <h4>Verify it works</h4>
+            <p>
+              Open another terminal and check the
+              health endpoint:
+            </p>
+            <div class="code-block">
+              <span class="lang-label">terminal</span>
+curl http://localhost:9710/health
+            </div>
+            <p>
+              You should see:
+              <code>{"status": "healthy"}</code>
+            </p>
+          </div>
+        </div>
+
+        <div class="callout callout-success">
+          <span class="callout-icon">&#9989;</span>
+          <div>
+            <strong>That's it!</strong>
+            The backend runs on port 9710, OPA on port
+            9720, and the database on port 9730. The
+            dashboard runs on port 5173.
+          </div>
+        </div>
+
+        <!-- Environment Variables -->
+        <h2>Environment Variables</h2>
+
+        <p>
+          These settings control how CloudLine behaves.
+          Copy <code>.env.example</code> to
+          <code>.env</code> and adjust as needed.
+        </p>
+
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Variable</th>
+                <th>Required?</th>
+                <th>Default</th>
+                <th>What It Does</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>AWS_REGION</code></td>
+                <td>Yes</td>
+                <td>us-east-1</td>
+                <td>
+                  Which AWS region to scan
+                </td>
+              </tr>
+              <tr>
+                <td><code>AWS_ACCOUNT_ID</code></td>
+                <td>Yes</td>
+                <td>&mdash;</td>
+                <td>
+                  Your 12-digit AWS account number
+                </td>
+              </tr>
+              <tr>
+                <td><code>APP_ENV</code></td>
+                <td>No</td>
+                <td>development</td>
+                <td>
+                  "development" or "production"
+                </td>
+              </tr>
+              <tr>
+                <td><code>LOG_LEVEL</code></td>
+                <td>No</td>
+                <td>DEBUG</td>
+                <td>
+                  How much detail to log
+                  (DEBUG, INFO, WARNING, ERROR)
+                </td>
+              </tr>
+              <tr>
+                <td><code>OPA_MODE</code></td>
+                <td>No</td>
+                <td>http</td>
+                <td>
+                  "cli" for local OPA, "http" for
+                  Docker sidecar
+                </td>
+              </tr>
+              <tr>
+                <td><code>CORS_ORIGINS</code></td>
+                <td>No</td>
+                <td>
+                  http://localhost:5173
+                </td>
+                <td>
+                  Which websites can access the API
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Useful Commands -->
+        <h2>Useful Commands</h2>
+
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Command</th>
+                <th>What It Does</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>make docker-up</code></td>
+                <td>
+                  Start all services (backend +
+                  OPA + database)
+                </td>
+              </tr>
+              <tr>
+                <td><code>make docker-down</code></td>
+                <td>Stop all services</td>
+              </tr>
+              <tr>
+                <td><code>make docker-logs</code></td>
+                <td>
+                  Follow service logs in real time
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <code>make docker-restart</code>
+                </td>
+                <td>
+                  Restart all services
+                </td>
+              </tr>
+              <tr>
+                <td><code>make test</code></td>
+                <td>
+                  Run backend tests
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <code>make frontend-test</code>
+                </td>
+                <td>
+                  Run frontend tests
+                </td>
+              </tr>
+              <tr>
+                <td><code>make opa-test</code></td>
+                <td>
+                  Run Rego policy tests
+                </td>
+              </tr>
+              <tr>
+                <td><code>make lint</code></td>
+                <td>Check code style</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="callout callout-success">
+          <span class="callout-icon">&#9989;</span>
+          <div>
+            <strong>Ready to go!</strong>
+            Next, learn
+            <a href="usage.html">how to use CloudLine</a>
+            to scan your AWS account.
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>

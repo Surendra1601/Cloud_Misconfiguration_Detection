@@ -1,0 +1,39 @@
+{
+  "remediation_id": "REM_10",
+  "title": "Disable Unused IAM Credentials",
+  "domain": "identity_access",
+  "severity": "medium",
+  "check_id": "CHECK_10",
+  "console_steps": [
+    "1. Open the IAM console",
+    "2. Click 'Users' in the left nav",
+    "3. Select the user with unused credentials",
+    "4. Go to 'Security credentials' tab",
+    "5. Under 'Access keys', find keys unused for 90+ days",
+    "6. Click 'Make inactive' to disable the key",
+    "7. After confirming no impact, click 'Delete'"
+  ],
+  "cli_command": "aws iam update-access-key --user-name {USER_NAME} --access-key-id {ACCESS_KEY_ID} --status Inactive",
+  "cli_example": "aws iam update-access-key --user-name jdoe --access-key-id AKIAIOSFODNN7EXAMPLE --status Inactive",
+  "terraform_snippet": "# Unused credentials should be managed operationally.\n# Use AWS Config rule to detect:\nresource \"aws_config_config_rule\" \"unused_creds\" {\n  name = \"iam-user-unused-credentials-check\"\n  source {\n    owner             = \"AWS\"\n    source_identifier = \"IAM_USER_UNUSED_CREDENTIALS_CHECK\"\n  }\n  input_parameters = jsonencode({\n    maxCredentialUsageAge = \"90\"\n  })\n}",
+  "references": [
+    {
+      "framework": "CIS AWS Foundations Benchmark",
+      "control_id": "1.12",
+      "title": "Ensure credentials unused for 90 days are disabled"
+    },
+    {
+      "framework": "NIST 800-53",
+      "control_id": "AC-2",
+      "title": "Account Management"
+    },
+    {
+      "framework": "SOC 2",
+      "control_id": "CC6.2",
+      "title": "Access removal on termination"
+    }
+  ],
+  "estimated_fix_time_minutes": 10,
+  "risk_reduction": "Medium — reduces attack surface from stale keys",
+  "rollback_difficulty": "Easy — key can be reactivated"
+}

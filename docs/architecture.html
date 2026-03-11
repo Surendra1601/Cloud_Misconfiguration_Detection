@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0" />
+  <title>How It Works — CloudLine</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="page-wrapper">
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <h1>CloudLine</h1>
+        <div class="subtitle">
+          AWS Security Documentation
+        </div>
+      </div>
+      <nav>
+        <div class="nav-section">Getting Started</div>
+        <a href="index.html">
+          <span class="nav-icon">&#127968;</span> Home
+        </a>
+        <a href="architecture.html">
+          <span class="nav-icon">&#128736;</span>
+          How It Works
+        </a>
+        <a href="getting-started.html">
+          <span class="nav-icon">&#128640;</span>
+          Deployment Guide
+        </a>
+        <a href="usage.html">
+          <span class="nav-icon">&#128214;</span>
+          Usage Guide
+        </a>
+        <div class="nav-section">Security Checks</div>
+        <a href="policies.html">
+          <span class="nav-icon">&#128737;</span>
+          All 21 Policies
+        </a>
+        <a href="testing.html">
+          <span class="nav-icon">&#9989;</span>
+          Testing Guide
+        </a>
+      </nav>
+    </aside>
+
+    <div class="sidebar-overlay"></div>
+
+    <main class="main-content">
+      <header class="content-header">
+        <button class="menu-toggle">&#9776;</button>
+        <span class="breadcrumb">
+          <a href="index.html">Home</a> &rsaquo;
+          How It Works
+        </span>
+      </header>
+
+      <div class="content-body">
+        <h1>How CloudLine Works</h1>
+        <p class="page-description">
+          CloudLine uses a 6-layer system to find, score,
+          and fix security problems in your AWS account.
+          Here is how each layer works, explained simply.
+        </p>
+
+        <div class="analogy">
+          <strong>Think of It Like a Hospital</strong>
+          Layer 1 collects your health data (blood tests,
+          X-rays). Layer 2 is the doctor who reads the
+          results. Layer 3 monitors you 24/7. Layer 4
+          tells you how sick you are. Layer 5 gives
+          you the medicine. Layer 6 is the patient
+          portal where you see everything.
+        </div>
+
+        <!-- Layer 1 -->
+        <div class="domain-header">
+          <span class="domain-icon">&#128230;</span>
+          <h2>Layer 1: Data Collection</h2>
+        </div>
+
+        <p><strong>What it does:</strong>
+          Gathers information about your AWS resources.
+        </p>
+
+        <p>
+          CloudLine has 8 "collectors" &mdash; small
+          programs that talk to AWS and ask questions
+          like:
+        </p>
+
+        <ul>
+          <li>
+            "What S3 buckets exist and are they
+            publicly accessible?"
+          </li>
+          <li>
+            "Do all IAM users have MFA turned on?"
+          </li>
+          <li>
+            "Are EC2 instances using the secure metadata
+            service?"
+          </li>
+        </ul>
+
+        <p>
+          Each collector retrieves data from one AWS
+          service and converts it into a standard format
+          (JSON). This means all 8 services produce data
+          that looks the same, making it easy for the
+          next layer to process.
+        </p>
+
+        <div class="callout callout-info">
+          <span class="callout-icon">&#128161;</span>
+          <div>
+            <strong>The 8 collectors:</strong>
+            IAM, S3, EC2, VPC, RDS, Lambda,
+            Logging (CloudTrail/Config/CloudWatch/
+            GuardDuty), and KMS (Secrets Manager/Backup).
+          </div>
+        </div>
+
+        <!-- Layer 2 -->
+        <div class="domain-header">
+          <span class="domain-icon">&#128270;</span>
+          <h2>Layer 2: Policy Engine (OPA/Rego)</h2>
+        </div>
+
+        <p><strong>What it does:</strong>
+          Analyzes the collected data against 21 security
+          rules.
+        </p>
+
+        <div class="analogy">
+          <strong>Simple Analogy</strong>
+          Think of this like a checklist. The policy
+          engine goes through each item and checks
+          "Is this secure? Yes or No." If the answer
+          is No, it creates a "violation" with details
+          about what is wrong.
+        </div>
+
+        <p>
+          CloudLine uses <strong>Open Policy Agent
+          (OPA)</strong> &mdash; an open-source tool
+          used by companies worldwide to enforce
+          security rules. The rules are written in a
+          language called <strong>Rego</strong>.
+        </p>
+
+        <p>
+          Each rule checks one specific thing. For
+          example, Check #04 asks: "Does this S3 bucket
+          block all public access?" If the answer is no,
+          it creates a violation that says:
+        </p>
+
+        <div class="code-block">
+          <span class="lang-label">Result</span>
+"check_id": "CHECK_04"
+"severity": "critical"
+"reason": "S3 bucket does not block public access"
+"resource": "arn:aws:s3:::my-bucket"
+        </div>
+
+        <!-- Layer 3 -->
+        <div class="domain-header">
+          <span class="domain-icon">&#9889;</span>
+          <h2>Layer 3: Real-Time Detection</h2>
+        </div>
+
+        <p><strong>What it does:</strong>
+          Watches for changes in your AWS account and
+          checks them instantly.
+        </p>
+
+        <p>
+          Instead of only scanning once a day, CloudLine
+          also monitors your AWS account in real-time.
+          Here is how:
+        </p>
+
+        <div class="steps">
+          <div class="step">
+            <h4>Someone changes something in AWS</h4>
+            <p>
+              For example, someone opens SSH port 22
+              on a security group.
+            </p>
+          </div>
+          <div class="step">
+            <h4>AWS CloudTrail records the change</h4>
+            <p>
+              CloudTrail logs every API call made in
+              your account.
+            </p>
+          </div>
+          <div class="step">
+            <h4>EventBridge detects the event</h4>
+            <p>
+              AWS EventBridge matches the event name
+              (e.g., "AuthorizeSecurityGroupIngress")
+              against CloudLine's list of 20 tracked
+              events.
+            </p>
+          </div>
+          <div class="step">
+            <h4>Lambda function triggers</h4>
+            <p>
+              A serverless function runs automatically,
+              re-collects the resource data, and
+              re-evaluates the relevant policy.
+            </p>
+          </div>
+          <div class="step">
+            <h4>Alert sent if there is a problem</h4>
+            <p>
+              If the change introduced a security
+              issue, CloudLine sends an alert via SNS
+              and updates the dashboard in real-time.
+            </p>
+          </div>
+        </div>
+
+        <div class="callout callout-warning">
+          <span class="callout-icon">&#9888;&#65039;</span>
+          <div>
+            CloudLine tracks 20 specific CloudTrail
+            events. Not every AWS action triggers a
+            re-scan &mdash; only the ones that could
+            affect security.
+          </div>
+        </div>
+
+        <!-- Layer 4 -->
+        <div class="domain-header">
+          <span class="domain-icon">&#128200;</span>
+          <h2>Layer 4: Risk Scoring</h2>
+        </div>
+
+        <p><strong>What it does:</strong>
+          Calculates how dangerous each finding is on
+          a scale of 0 to 100.
+        </p>
+
+        <p>
+          Not all security problems are equally
+          dangerous. A publicly accessible database
+          (score: 95) is far worse than a missing
+          CloudWatch alarm (score: 35). CloudLine uses
+          5 factors to calculate risk:
+        </p>
+
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Factor</th>
+                <th>Weight</th>
+                <th>What It Measures</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Severity</strong></td>
+                <td>30%</td>
+                <td>
+                  How serious is the vulnerability?
+                  (Critical, High, Medium)
+                </td>
+              </tr>
+              <tr>
+                <td><strong>Exploitability</strong></td>
+                <td>25%</td>
+                <td>
+                  How easy is it for an attacker to
+                  exploit this?
+                </td>
+              </tr>
+              <tr>
+                <td><strong>Blast Radius</strong></td>
+                <td>20%</td>
+                <td>
+                  How much damage could this cause if
+                  exploited?
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <strong>Data Sensitivity</strong>
+                </td>
+                <td>15%</td>
+                <td>
+                  Does the affected resource handle
+                  sensitive data?
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <strong>Compliance Impact</strong>
+                </td>
+                <td>10%</td>
+                <td>
+                  How many compliance frameworks does
+                  this violate?
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p>Risk categories:</p>
+        <ul>
+          <li>
+            <span class="badge badge-critical">
+              Critical</span> 90&ndash;100 &mdash;
+            Fix immediately
+          </li>
+          <li>
+            <span class="badge badge-high">
+              High</span> 70&ndash;89 &mdash;
+            Fix within 24 hours
+          </li>
+          <li>
+            <span class="badge badge-medium">
+              Medium</span> 40&ndash;69 &mdash;
+            Fix within 1 week
+          </li>
+          <li>
+            <span class="badge badge-low">
+              Low</span> 0&ndash;39 &mdash;
+            Fix when convenient
+          </li>
+        </ul>
+
+        <!-- Layer 5 -->
+        <div class="domain-header">
+          <span class="domain-icon">&#128296;</span>
+          <h2>Layer 5: Automated Remediation</h2>
+        </div>
+
+        <p><strong>What it does:</strong>
+          Helps you fix the problems &mdash; from
+          simple instructions to fully automatic fixes.
+        </p>
+
+        <p>
+          CloudLine offers 3 levels ("tiers") of help:
+        </p>
+
+        <div class="card-grid">
+          <div class="card">
+            <h4>
+              <span class="tier-badge tier-1">
+                Tier 1
+              </span> Suggestions
+            </h4>
+            <p>
+              Every finding comes with step-by-step
+              console instructions, an AWS CLI command,
+              and a Terraform snippet. You follow the
+              instructions manually.
+            </p>
+            <p>
+              <em>Available for all 21 checks.</em>
+            </p>
+          </div>
+
+          <div class="card">
+            <h4>
+              <span class="tier-badge tier-2">
+                Tier 2
+              </span> One-Click Fixes
+            </h4>
+            <p>
+              For 6 common problems, you can click a
+              button and CloudLine fixes it for you
+              automatically. You can also undo the fix
+              if needed.
+            </p>
+            <p>
+              <em>
+                Available for: S3 public access,
+                CloudTrail, security groups, IMDSv2,
+                EBS encryption, password policy.
+              </em>
+            </p>
+          </div>
+
+          <div class="card">
+            <h4>
+              <span class="tier-badge tier-3">
+                Tier 3
+              </span> Auto-Remediation
+            </h4>
+            <p>
+              When enabled, CloudLine automatically
+              fixes new violations as they are detected.
+              You configure which checks should be
+              auto-remediated.
+            </p>
+            <p>
+              <em>
+                Optional &mdash; you control which
+                checks run automatically.
+              </em>
+            </p>
+          </div>
+        </div>
+
+        <!-- Layer 6 -->
+        <div class="domain-header">
+          <span class="domain-icon">&#128187;</span>
+          <h2>Layer 6: Compliance Dashboard</h2>
+        </div>
+
+        <p><strong>What it does:</strong>
+          Shows you everything in a visual web interface.
+        </p>
+
+        <p>
+          The dashboard is a web application built with
+          React that shows:
+        </p>
+
+        <ul>
+          <li>
+            <strong>Overall compliance score</strong>
+            &mdash; a percentage showing how secure
+            your AWS account is
+          </li>
+          <li>
+            <strong>Violations list</strong>
+            &mdash; sortable and filterable by severity,
+            domain, or status
+          </li>
+          <li>
+            <strong>Trend charts</strong>
+            &mdash; are things getting better or worse
+            over time?
+          </li>
+          <li>
+            <strong>Risk summary</strong>
+            &mdash; highest-risk findings that need
+            immediate attention
+          </li>
+          <li>
+            <strong>Real-time alerts</strong>
+            &mdash; instant notifications when new
+            violations are detected
+          </li>
+          <li>
+            <strong>Remediation panel</strong>
+            &mdash; fix issues directly from the
+            dashboard
+          </li>
+        </ul>
+
+        <!-- Flow Diagram (text-based) -->
+        <h2>The Complete Flow</h2>
+
+        <div class="code-block">
+          <span class="lang-label">Flow</span>
+Your AWS Account
+    |
+    v
+[1] Data Collectors (8 services)
+    |
+    v
+[2] OPA Policy Engine (21 rules)
+    |
+    +---> Violation found? ---> [4] Risk Scoring
+    |                               |
+    |                               v
+    |                          [5] Remediation
+    |                               |
+    |                               v
+    +---> Results displayed on [6] Dashboard
+    |
+    |  (Meanwhile, in real-time...)
+    |
+[3] CloudTrail Event
+    |
+    v
+    EventBridge ---> Lambda
+    |
+    v
+    Re-evaluate policy ---> Update Dashboard
+        </div>
+
+        <div class="callout callout-success">
+          <span class="callout-icon">&#9989;</span>
+          <div>
+            <strong>Ready to deploy?</strong>
+            Head to the
+            <a href="getting-started.html">
+              Deployment Guide</a>
+            to set up CloudLine in your AWS account.
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>
