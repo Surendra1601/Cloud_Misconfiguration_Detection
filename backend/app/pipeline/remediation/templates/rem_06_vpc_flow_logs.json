@@ -1,0 +1,40 @@
+{
+  "remediation_id": "REM_06",
+  "title": "Enable VPC Flow Logs",
+  "domain": "logging_monitoring",
+  "severity": "medium",
+  "check_id": "CHECK_06",
+  "console_steps": [
+    "1. Open the VPC console",
+    "2. Select the VPC without flow logs",
+    "3. Click 'Actions' > 'Create flow log'",
+    "4. Set Filter to 'All' (accept and reject)",
+    "5. Choose destination: CloudWatch Logs or S3",
+    "6. For CloudWatch: select or create a log group",
+    "7. Select or create an IAM role for delivery",
+    "8. Click 'Create flow log'"
+  ],
+  "cli_command": "aws ec2 create-flow-logs --resource-type VPC --resource-ids {VPC_ID} --traffic-type ALL --log-destination-type cloud-watch-logs --log-group-name {LOG_GROUP} --deliver-logs-permission-arn {ROLE_ARN}",
+  "cli_example": "aws ec2 create-flow-logs --resource-type VPC --resource-ids vpc-0123456789abcdef0 --traffic-type ALL --log-destination-type cloud-watch-logs --log-group-name /aws/vpc/flowlogs --deliver-logs-permission-arn arn:aws:iam::123456789012:role/flowlogsRole",
+  "terraform_snippet": "resource \"aws_flow_log\" \"vpc\" {\n  iam_role_arn    = aws_iam_role.flow_log.arn\n  log_destination = aws_cloudwatch_log_group.flow.arn\n  traffic_type    = \"ALL\"\n  vpc_id          = aws_vpc.main.id\n}",
+  "references": [
+    {
+      "framework": "CIS AWS Foundations Benchmark",
+      "control_id": "3.9",
+      "title": "Ensure VPC flow logging is enabled in all VPCs"
+    },
+    {
+      "framework": "NIST 800-53",
+      "control_id": "AU-12",
+      "title": "Audit Generation"
+    },
+    {
+      "framework": "PCI DSS",
+      "control_id": "10.1",
+      "title": "Implement audit trails"
+    }
+  ],
+  "estimated_fix_time_minutes": 15,
+  "risk_reduction": "Medium — enables network traffic visibility",
+  "rollback_difficulty": "Easy — flow log can be deleted"
+}

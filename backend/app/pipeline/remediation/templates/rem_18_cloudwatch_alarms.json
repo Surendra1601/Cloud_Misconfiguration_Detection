@@ -1,0 +1,40 @@
+{
+  "remediation_id": "REM_18",
+  "title": "Configure CloudWatch Security Alarms",
+  "domain": "logging_monitoring",
+  "severity": "medium",
+  "check_id": "CHECK_18",
+  "console_steps": [
+    "1. Open the CloudWatch console",
+    "2. Click 'Log groups' > select CloudTrail log group",
+    "3. Click 'Metric filters' > 'Create metric filter'",
+    "4. Define filter pattern for security events",
+    "5. Create metric and assign namespace",
+    "6. Create alarm on the metric",
+    "7. Set threshold and notification (SNS topic)",
+    "8. Repeat for: unauthorized API calls, root login, IAM changes, CloudTrail changes"
+  ],
+  "cli_command": "aws cloudwatch put-metric-alarm --alarm-name {ALARM_NAME} --metric-name {METRIC_NAME} --namespace {NAMESPACE} --statistic Sum --period 300 --threshold 1 --comparison-operator GreaterThanOrEqualToThreshold --evaluation-periods 1 --alarm-actions {SNS_TOPIC_ARN}",
+  "cli_example": "aws cloudwatch put-metric-alarm --alarm-name UnauthorizedAPICalls --metric-name UnauthorizedAPICallCount --namespace CloudTrailMetrics --statistic Sum --period 300 --threshold 1 --comparison-operator GreaterThanOrEqualToThreshold --evaluation-periods 1 --alarm-actions arn:aws:sns:us-east-1:123456789012:security-alerts",
+  "terraform_snippet": "resource \"aws_cloudwatch_metric_alarm\" \"unauthorized\" {\n  alarm_name          = \"UnauthorizedAPICalls\"\n  comparison_operator = \"GreaterThanOrEqualToThreshold\"\n  evaluation_periods  = 1\n  metric_name        = \"UnauthorizedAPICallCount\"\n  namespace          = \"CloudTrailMetrics\"\n  period             = 300\n  statistic          = \"Sum\"\n  threshold          = 1\n  alarm_actions      = [aws_sns_topic.alerts.arn]\n}",
+  "references": [
+    {
+      "framework": "CIS AWS Foundations Benchmark",
+      "control_id": "4.1",
+      "title": "Ensure a log metric filter exists for unauthorized API calls"
+    },
+    {
+      "framework": "NIST 800-53",
+      "control_id": "AU-6",
+      "title": "Audit Review, Analysis, and Reporting"
+    },
+    {
+      "framework": "PCI DSS",
+      "control_id": "10.6",
+      "title": "Review logs and security events regularly"
+    }
+  ],
+  "estimated_fix_time_minutes": 30,
+  "risk_reduction": "Medium — enables real-time security alerting",
+  "rollback_difficulty": "Easy — alarms can be deleted"
+}

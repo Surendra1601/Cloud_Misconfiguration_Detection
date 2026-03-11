@@ -1,0 +1,39 @@
+{
+  "remediation_id": "REM_09",
+  "title": "Secure RDS Instance Configuration",
+  "domain": "data_protection",
+  "severity": "high",
+  "check_id": "CHECK_09",
+  "console_steps": [
+    "1. Open the RDS console",
+    "2. Select the affected DB instance",
+    "3. Click 'Modify'",
+    "4. Under 'Connectivity', set 'Public access' to 'No'",
+    "5. Under 'Encryption', enable storage encryption",
+    "6. Under 'Monitoring', enable enhanced monitoring",
+    "7. Click 'Continue' and apply immediately or during maintenance"
+  ],
+  "cli_command": "aws rds modify-db-instance --db-instance-identifier {DB_INSTANCE_ID} --no-publicly-accessible --apply-immediately",
+  "cli_example": "aws rds modify-db-instance --db-instance-identifier mydb --no-publicly-accessible --apply-immediately",
+  "terraform_snippet": "resource \"aws_db_instance\" \"example\" {\n  # ... other config ...\n\n  publicly_accessible    = false\n  storage_encrypted      = true\n  deletion_protection    = true\n  backup_retention_period = 7\n}",
+  "references": [
+    {
+      "framework": "CIS AWS Foundations Benchmark",
+      "control_id": "2.3.1",
+      "title": "Ensure RDS instance is not publicly accessible"
+    },
+    {
+      "framework": "NIST 800-53",
+      "control_id": "SC-28",
+      "title": "Protection of Information at Rest"
+    },
+    {
+      "framework": "HIPAA",
+      "control_id": "164.312(a)(2)(iv)",
+      "title": "Encryption and Decryption"
+    }
+  ],
+  "estimated_fix_time_minutes": 15,
+  "risk_reduction": "High — eliminates public database exposure",
+  "rollback_difficulty": "Medium — may require maintenance window"
+}

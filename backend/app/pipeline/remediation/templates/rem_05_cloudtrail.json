@@ -1,0 +1,41 @@
+{
+  "remediation_id": "REM_05",
+  "title": "Enable CloudTrail Multi-Region Logging",
+  "domain": "logging_monitoring",
+  "severity": "critical",
+  "check_id": "CHECK_05",
+  "console_steps": [
+    "1. Open the AWS CloudTrail console",
+    "2. Click 'Trails' in the left nav",
+    "3. Select the trail to update (or create a new one)",
+    "4. Click 'Edit'",
+    "5. Under 'General details', enable 'Multi-region trail'",
+    "6. Ensure 'Management events' are enabled",
+    "7. Configure S3 bucket for log storage",
+    "8. Enable log file validation",
+    "9. Click 'Save changes'"
+  ],
+  "cli_command": "aws cloudtrail update-trail --name {TRAIL_NAME} --is-multi-region-trail",
+  "cli_example": "aws cloudtrail update-trail --name my-trail --is-multi-region-trail",
+  "terraform_snippet": "resource \"aws_cloudtrail\" \"main\" {\n  name                       = \"main-trail\"\n  s3_bucket_name            = aws_s3_bucket.trail.id\n  is_multi_region_trail     = true\n  enable_log_file_validation = true\n  include_global_service_events = true\n\n  event_selector {\n    read_write_type           = \"All\"\n    include_management_events = true\n  }\n}",
+  "references": [
+    {
+      "framework": "CIS AWS Foundations Benchmark",
+      "control_id": "3.1",
+      "title": "Ensure CloudTrail is enabled in all regions"
+    },
+    {
+      "framework": "NIST 800-53",
+      "control_id": "AU-2",
+      "title": "Audit Events"
+    },
+    {
+      "framework": "SOC 2",
+      "control_id": "CC7.2",
+      "title": "System monitoring"
+    }
+  ],
+  "estimated_fix_time_minutes": 10,
+  "risk_reduction": "Critical — ensures full audit trail across all regions",
+  "rollback_difficulty": "Easy — can disable multi-region on the trail"
+}
